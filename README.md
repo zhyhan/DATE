@@ -1,52 +1,20 @@
-# [Universal Domain Adaptation through Self-Supervision (NeurlPS 2020)](https://arxiv.org/pdf/2002.07953.pd)
+# DATE
+Discriminability and Transferability Estimation
 
-This repository provides code for the paper, Universal Domain Adaptation through Self-Supervision.
-Please go to our project page to quickly understand the content of the paper or read our paper.
-### [[Project Page]](http://cs-people.bu.edu/keisaito/research/DANCE.html)  [[Paper (will be updated soon)]](https://arxiv.org/pdf/2002.07953.pdf)
+### Overview
+This repository is a PyTorch implementation of the paper.
 
+### Dataset
+- Manually download the datasets [Office](https://drive.google.com/file/d/0B4IapRTv9pJ1WGZVd1VDMmhwdlE/view), [Office-Home](https://drive.google.com/file/d/0B81rNlvomiwed0V1YUxQdC1uOTg/view), [Office-Caltech](http://www.vision.caltech.edu/Image_Datasets/Caltech256/256_ObjectCategories.tar) from the official websites.
+- Move `gen_list.py` inside data directory.
+- Generate '.txt' file for each dataset using `gen_list.py` (change dataset argument in the file accordingly). 
 
-## Environment
-Python 3.6.9, Pytorch 1.2.0, Torch Vision 0.4, [Apex](https://github.com/NVIDIA/apex). See requirement.txt.
- We used the nvidia apex library for memory efficient high-speed training.
-
-## Data Preparation
-
-[Office Dataset](https://people.eecs.berkeley.edu/~jhoffman/domainadapt/)
-[OfficeHome Dataset](http://hemanthdv.org/OfficeHome-Dataset/) [VisDA](https://github.com/VisionLearningGroup/taskcv-2017-public/tree/master/classification)
-
-Prepare dataset in data directory as follows.
+### Training
+- Train source models (shown here for Office with source A)
 ```
-./data/amazon/images/ ## Office
-./data/Real/ ## OfficeHome
-./data/visda_train/ ## VisDA synthetic images
-./data/visda_val/ ## VisDA real images
+python train_source.py --dset office --s 0 --max_epoch 100 --trte val --gpu_id 0 --output ckps/source/
 ```
-Prepare image list.
+- Adapt to target (shown here for Office with target D) based on SHOT
 ```
-unzip txt.zip
+python adapt_multi_DATE_SHOT.py --dset office --t 1 --max_epoch 15 --gpu_id 0 --output_src ckps/source/ --output ckps/adapt
 ```
-File list has to be stored in ./txt.
-
-
-## Train
-
-All training script is stored in script directory.
-
-Example: Open Set Domain Adaptation on Office.
-```
-sh script/run_office_obda.sh $gpu-id configs/office-train-config_ODA.yaml
-```
-
-### Reference
-This repository is contributed by [Kuniaki Saito](http://cs-people.bu.edu/keisaito/).
-If you consider using this code or its derivatives, please consider citing:
-
-```
-@inproceedings{saito2020dance,
-  title={Universal Domain Adaptation through Self-Supervision},
-  author={Saito, Kuniaki and Kim, Donghyun and Sclaroff, Stan and Saenko, Kate},
-  journal={NeurIPS},
-  year={2020}
-}
-```
-
